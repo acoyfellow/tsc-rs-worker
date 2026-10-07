@@ -1,0 +1,474 @@
+{
+  "question": "Does a property-name allowlist from tools.d.ts catch the same failing cases as the tsc-rs checker?",
+  "answer": {
+    "strictAllowlistCatchesSameSetAsTsc": false,
+    "lenientAllowlistCatchesSameSetAsTsc": false,
+    "tscRefusedEveryFailingCaseForTheRightReason": true,
+    "tscRefusedNoValidControl": true
+  },
+  "summary": {
+    "tsc": {
+      "caught": [
+        "missing method",
+        "wrong argument count",
+        "wrong argument type",
+        "generic constraint failure",
+        "narrowed union after a condition"
+      ],
+      "missed": [],
+      "refusedValid": []
+    },
+    "allowlistStrict": {
+      "caught": [
+        "missing method",
+        "generic constraint failure",
+        "narrowed union after a condition"
+      ],
+      "missed": [
+        "wrong argument count",
+        "wrong argument type"
+      ],
+      "refusedValid": [
+        "string and array methods on a tool result",
+        "a local object with its own fields"
+      ]
+    },
+    "allowlistLenient": {
+      "caught": [
+        "missing method"
+      ],
+      "missed": [
+        "wrong argument count",
+        "wrong argument type",
+        "generic constraint failure",
+        "narrowed union after a condition"
+      ],
+      "refusedValid": [
+        "a local object with its own fields"
+      ]
+    }
+  },
+  "allowlist": {
+    "fromDts": [
+      "workspace",
+      "exec",
+      "command",
+      "cwd",
+      "stdout",
+      "stderr",
+      "exitCode",
+      "readFile",
+      "path"
+    ],
+    "builtinNames": 299
+  },
+  "runtime": "node v22.22.3, typescript 5.9.3 (parser and type stripping only)",
+  "results": [
+    {
+      "kind": "missing method",
+      "from": "demo preset 'Made-up method', verbatim",
+      "expect": [
+        2339,
+        2339
+      ],
+      "src": "export default async () => {\n  await workspace.writeFile({ path: \"/a\", text: \"x\" });\n  const r = await workspace.exec({ command: \"ls\" });\n  return r.output;\n};",
+      "ungated": {
+        "threw": true,
+        "error": "TypeError: workspace.writeFile is not a function",
+        "toolCalls": []
+      },
+      "gates": {
+        "tsc": {
+          "refuse": true,
+          "codes": [
+            2339,
+            2339
+          ],
+          "reasons": [
+            "agent.ts:2 TS2339: Property 'writeFile' does not exist on type '{ exec(input: { command: string; cwd?: string | undefined; }): Promise<{ stdout: string; stderr: string; exitCode: number; }>; readFile(input: { path: string; }): Promise<string>; }'.",
+            "agent.ts:4 TS2339: Property 'output' does not exist on type '{ stdout: string; stderr: string; exitCode: number; }'."
+          ],
+          "ms": 170,
+          "ran": null
+        },
+        "allowlistStrict": {
+          "refuse": true,
+          "reasons": [
+            "agent.ts:2 'text' is not in tools.d.ts",
+            "agent.ts:2 'writeFile' is not in tools.d.ts",
+            "agent.ts:4 'output' is not in tools.d.ts"
+          ],
+          "ms": 1,
+          "ran": null
+        },
+        "allowlistLenient": {
+          "refuse": true,
+          "reasons": [
+            "agent.ts:2 'text' is not in tools.d.ts",
+            "agent.ts:2 'writeFile' is not in tools.d.ts",
+            "agent.ts:4 'output' is not in tools.d.ts"
+          ],
+          "ms": 1,
+          "ran": null
+        }
+      },
+      "tscRightReason": true
+    },
+    {
+      "kind": "wrong argument count",
+      "from": "demo preset 'Valid', with options passed as a second argument",
+      "expect": [
+        2554
+      ],
+      "src": "export default async () => {\n  const r = await workspace.exec({ command: \"pwd\" }, { cwd: \"/tmp\" });\n  return r.stdout;\n};",
+      "ungated": {
+        "threw": false,
+        "value": "/home/user\n",
+        "toolCalls": [
+          "[\"exec\",{\"command\":\"pwd\"},{\"cwd\":\"/tmp\"}]"
+        ]
+      },
+      "gates": {
+        "tsc": {
+          "refuse": true,
+          "codes": [
+            2554
+          ],
+          "reasons": [
+            "agent.ts:2 TS2554: Expected 1 arguments, but got 2."
+          ],
+          "ms": 80,
+          "ran": null
+        },
+        "allowlistStrict": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 1,
+          "ran": {
+            "threw": false,
+            "value": "/home/user\n",
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"pwd\"},{\"cwd\":\"/tmp\"}]"
+            ]
+          }
+        },
+        "allowlistLenient": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 1,
+          "ran": {
+            "threw": false,
+            "value": "/home/user\n",
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"pwd\"},{\"cwd\":\"/tmp\"}]"
+            ]
+          }
+        }
+      },
+      "tscRightReason": true
+    },
+    {
+      "kind": "wrong argument type",
+      "from": "demo preset 'Wrong argument', verbatim",
+      "expect": [
+        2345
+      ],
+      "src": "export default async () => {\n  const r = await workspace.exec(\"ls -la\");\n  return r.stdout;\n};",
+      "ungated": {
+        "threw": true,
+        "error": "Error: Tool arguments must be a JSON object",
+        "toolCalls": [
+          "[\"exec\",\"ls -la\"]"
+        ]
+      },
+      "gates": {
+        "tsc": {
+          "refuse": true,
+          "codes": [
+            2345
+          ],
+          "reasons": [
+            "agent.ts:2 TS2345: Argument of type 'string' is not assignable to parameter of type '{ command: string; cwd?: string | undefined; }'."
+          ],
+          "ms": 86,
+          "ran": null
+        },
+        "allowlistStrict": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 1,
+          "ran": {
+            "threw": true,
+            "error": "Error: Tool arguments must be a JSON object",
+            "toolCalls": [
+              "[\"exec\",\"ls -la\"]"
+            ]
+          }
+        },
+        "allowlistLenient": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 0,
+          "ran": {
+            "threw": true,
+            "error": "Error: Tool arguments must be a JSON object",
+            "toolCalls": [
+              "[\"exec\",\"ls -la\"]"
+            ]
+          }
+        }
+      },
+      "tscRightReason": true
+    },
+    {
+      "kind": "generic constraint failure",
+      "from": "a helper constrained to exec's result, given readFile's string",
+      "expect": [
+        2345
+      ],
+      "src": "const firstLine = <T extends { stdout: string }>(r: T) => r.stdout.split(\"\\n\")[0];\n\nexport default async () => {\n  const hosts = await workspace.readFile({ path: \"/etc/hosts\" });\n  return firstLine(hosts);\n};",
+      "ungated": {
+        "threw": true,
+        "error": "TypeError: Cannot read properties of undefined (reading 'split')",
+        "toolCalls": [
+          "[\"readFile\",{\"path\":\"/etc/hosts\"}]"
+        ]
+      },
+      "gates": {
+        "tsc": {
+          "refuse": true,
+          "codes": [
+            2345
+          ],
+          "reasons": [
+            "agent.ts:5 TS2345: Argument of type 'string' is not assignable to parameter of type '{ stdout: string; }'."
+          ],
+          "ms": 83,
+          "ran": null
+        },
+        "allowlistStrict": {
+          "refuse": true,
+          "reasons": [
+            "agent.ts:1 'split' is not in tools.d.ts"
+          ],
+          "ms": 1,
+          "ran": null
+        },
+        "allowlistLenient": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 1,
+          "ran": {
+            "threw": true,
+            "error": "TypeError: Cannot read properties of undefined (reading 'split')",
+            "toolCalls": [
+              "[\"readFile\",{\"path\":\"/etc/hosts\"}]"
+            ]
+          }
+        }
+      },
+      "tscRightReason": true
+    },
+    {
+      "kind": "narrowed union after a condition",
+      "from": "readFile or exec; after the string check, out is exec's result",
+      "expect": [
+        2339
+      ],
+      "src": "export default async (fromFile: boolean) => {\n  const out = fromFile\n    ? await workspace.readFile({ path: \"/tmp/out.txt\" })\n    : await workspace.exec({ command: \"cat /tmp/out.txt\" });\n  if (typeof out === \"string\") return out;\n  return out.trim();\n};",
+      "ungated": {
+        "threw": true,
+        "error": "TypeError: out.trim is not a function",
+        "toolCalls": [
+          "[\"exec\",{\"command\":\"cat /tmp/out.txt\"}]"
+        ]
+      },
+      "gates": {
+        "tsc": {
+          "refuse": true,
+          "codes": [
+            2339
+          ],
+          "reasons": [
+            "agent.ts:6 TS2339: Property 'trim' does not exist on type '{ stdout: string; stderr: string; exitCode: number; }'."
+          ],
+          "ms": 83,
+          "ran": null
+        },
+        "allowlistStrict": {
+          "refuse": true,
+          "reasons": [
+            "agent.ts:6 'trim' is not in tools.d.ts"
+          ],
+          "ms": 1,
+          "ran": null
+        },
+        "allowlistLenient": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 1,
+          "ran": {
+            "threw": true,
+            "error": "TypeError: out.trim is not a function",
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"cat /tmp/out.txt\"}]"
+            ]
+          }
+        }
+      },
+      "tscRightReason": true
+    },
+    {
+      "kind": "valid (control)",
+      "from": "demo preset 'Valid', verbatim",
+      "expect": [],
+      "src": "export default async () => {\n  const r = await workspace.exec({ command: \"ls\", cwd: \"/tmp\" });\n  return r.exitCode === 0 ? r.stdout : r.stderr;\n};",
+      "ungated": {
+        "threw": false,
+        "value": "a.txt\nb.txt\n",
+        "toolCalls": [
+          "[\"exec\",{\"command\":\"ls\",\"cwd\":\"/tmp\"}]"
+        ]
+      },
+      "gates": {
+        "tsc": {
+          "refuse": false,
+          "codes": [],
+          "reasons": [],
+          "ms": 78,
+          "ran": {
+            "threw": false,
+            "value": "a.txt\nb.txt\n",
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"ls\",\"cwd\":\"/tmp\"}]"
+            ]
+          }
+        },
+        "allowlistStrict": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 0,
+          "ran": {
+            "threw": false,
+            "value": "a.txt\nb.txt\n",
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"ls\",\"cwd\":\"/tmp\"}]"
+            ]
+          }
+        },
+        "allowlistLenient": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 0,
+          "ran": {
+            "threw": false,
+            "value": "a.txt\nb.txt\n",
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"ls\",\"cwd\":\"/tmp\"}]"
+            ]
+          }
+        }
+      },
+      "tscRightReason": true
+    },
+    {
+      "kind": "valid (control)",
+      "from": "string and array methods on a tool result",
+      "expect": [],
+      "src": "export default async () => {\n  const r = await workspace.exec({ command: \"ls\" });\n  return r.stdout.trim().split(\"\\n\").length;\n};",
+      "ungated": {
+        "threw": false,
+        "value": 2,
+        "toolCalls": [
+          "[\"exec\",{\"command\":\"ls\"}]"
+        ]
+      },
+      "gates": {
+        "tsc": {
+          "refuse": false,
+          "codes": [],
+          "reasons": [],
+          "ms": 75,
+          "ran": {
+            "threw": false,
+            "value": 2,
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"ls\"}]"
+            ]
+          }
+        },
+        "allowlistStrict": {
+          "refuse": true,
+          "reasons": [
+            "agent.ts:3 'length' is not in tools.d.ts",
+            "agent.ts:3 'split' is not in tools.d.ts",
+            "agent.ts:3 'trim' is not in tools.d.ts"
+          ],
+          "ms": 0,
+          "ran": null
+        },
+        "allowlistLenient": {
+          "refuse": false,
+          "reasons": [],
+          "ms": 0,
+          "ran": {
+            "threw": false,
+            "value": 2,
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"ls\"}]"
+            ]
+          }
+        }
+      },
+      "tscRightReason": true
+    },
+    {
+      "kind": "valid (control)",
+      "from": "a local object with its own fields",
+      "expect": [],
+      "src": "export default async () => {\n  const seen = { files: 0 };\n  const r = await workspace.exec({ command: \"ls\" });\n  for (const line of r.stdout.split(\"\\n\")) if (line) seen.files++;\n  return seen.files;\n};",
+      "ungated": {
+        "threw": false,
+        "value": 2,
+        "toolCalls": [
+          "[\"exec\",{\"command\":\"ls\"}]"
+        ]
+      },
+      "gates": {
+        "tsc": {
+          "refuse": false,
+          "codes": [],
+          "reasons": [],
+          "ms": 73,
+          "ran": {
+            "threw": false,
+            "value": 2,
+            "toolCalls": [
+              "[\"exec\",{\"command\":\"ls\"}]"
+            ]
+          }
+        },
+        "allowlistStrict": {
+          "refuse": true,
+          "reasons": [
+            "agent.ts:4 'split' is not in tools.d.ts",
+            "agent.ts:4 'files' is not in tools.d.ts",
+            "agent.ts:5 'files' is not in tools.d.ts"
+          ],
+          "ms": 0,
+          "ran": null
+        },
+        "allowlistLenient": {
+          "refuse": true,
+          "reasons": [
+            "agent.ts:4 'files' is not in tools.d.ts",
+            "agent.ts:5 'files' is not in tools.d.ts"
+          ],
+          "ms": 0,
+          "ran": null
+        }
+      },
+      "tscRightReason": true
+    }
+  ]
+}
