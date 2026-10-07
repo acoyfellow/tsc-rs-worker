@@ -8,6 +8,11 @@
 <link rel="canonical" href="https://tsc-rs.coey.dev/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f6821f'/%3E%3Ctext x='32' y='43' font-family='monospace' font-size='28' font-weight='700' text-anchor='middle' fill='white'%3ETS%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#f6821f">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="tsc-rs">
+<meta property="og:site_name" content="tsc-rs.coey.dev">
+<meta property="og:image:alt" content="The TypeScript type checker inside a Cloudflare Worker, catching a wrong argument: TS2345">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tsc-rs.coey.dev/">
 <meta property="og:title" content="The TypeScript type checker, inside a Cloudflare Worker">
@@ -184,6 +189,7 @@ async function check() {
 run.onclick = check;
 src.addEventListener("keydown", (e) => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") check(); });
 check();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
 </script>
 </body>
 </html>

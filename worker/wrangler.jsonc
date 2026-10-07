@@ -4,7 +4,7 @@
   "compatibility_date": "2026-10-01",
   "rules": [
     { "type": "CompiledWasm", "globs": ["**/*.wasm"], "fallthrough": true },
-    { "type": "Text", "globs": ["**/*.html"], "fallthrough": true },
+    { "type": "Text", "globs": ["**/*.html", "**/*.webmanifest", "**/*.txt"], "fallthrough": true },
     { "type": "Data", "globs": ["**/*.png"], "fallthrough": true }
   ],
   // 30 checks per minute per IP. Remove this block if your account has no rate limiting.

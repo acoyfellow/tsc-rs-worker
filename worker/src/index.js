@@ -1,11 +1,32 @@
 // Type-check TypeScript inside a Cloudflare Worker, in memory, with tsc-rs compiled to WebAssembly.
-//   GET  /       the demo page
+//   GET  /       the demo page (plus its manifest, icons, link-preview image and service worker)
 //   POST /check  { files: { "agent.ts": "...", "tools.d.ts"?: "..." } }
 //                -> { ok, exitCode, diagnostics: [{ code, line, file, text }] }
 import tsModule from "./ts_rust.wasm"; // wrangler bundles it as a compiled WebAssembly.Module
 import { runTsc, memoryFileSystem } from "./core.js"; // from ts-rust npm/wasm (MIT), see NOTICE.md
 import page from "./page.html";
+import manifest from "./manifest.webmanifest";
+import serviceWorker from "./sw.js.txt";
 import ogImage from "./og.png"; // link-preview image for X, Slack and others
+import icon192 from "./icon-192.png";
+import icon512 from "./icon-512.png";
+import appleTouchIcon from "./apple-touch-icon.png";
+
+const DAY = "public, max-age=86400";
+const STATIC = {
+  "/": [page, "text/html; charset=utf-8", "public, max-age=300"],
+  "/manifest.webmanifest": [manifest, "application/manifest+json", DAY],
+  "/sw.js": [serviceWorker, "text/javascript; charset=utf-8", "no-cache"],
+  "/og.png": [ogImage, "image/png", DAY],
+  "/icon-192.png": [icon192, "image/png", DAY],
+  "/icon-512.png": [icon512, "image/png", DAY],
+  "/apple-touch-icon.png": [appleTouchIcon, "image/png", DAY],
+  "/robots.txt": ["User-agent: *\nAllow: /\nSitemap: https://tsc-rs.coey.dev/sitemap.xml\n", "text/plain", DAY],
+  "/sitemap.xml": [
+    '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://tsc-rs.coey.dev/</loc></url></urlset>\n',
+    "application/xml", DAY,
+  ],
+};
 
 const MAX_BYTES = 64 * 1024;
 const TSCONFIG = JSON.stringify({
@@ -25,7 +46,8 @@ export function check(files) {
     const safe = name.replace(/[^\w.-]/g, "_");
     if (safe.endsWith(".ts")) fsFiles[`/p/${safe}`] = src;
   }
-  const out = runTsc(tsModule, { args: ["-p", "/p"], cwd: "/p", fs: memoryFileSystem(fsFiles), diagnosticsJson: true, env: {} });
+  // One checker: the Worker is single-threaded anyway, and it keeps memory down.
+  const out = runTsc(tsModule, { args: ["-p", "/p", "--checkers", "1"], cwd: "/p", fs: memoryFileSystem(fsFiles), diagnosticsJson: true, env: {} });
   const diagnostics = (out.diagnostics ?? []).map((d) => ({
     code: d.code, line: (d.startPosition?.line ?? -1) + 1, file: d.fileName, text: d.text,
   }));
@@ -35,14 +57,9 @@ export function check(files) {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
-    if (req.method === "GET" && url.pathname === "/") {
-      return new Response(page, { headers: { "content-type": "text/html; charset=utf-8" } });
-    }
-    if (req.method === "GET" && url.pathname === "/og.png") {
-      return new Response(ogImage, { headers: { "content-type": "image/png", "cache-control": "public, max-age=86400" } });
-    }
-    if (req.method === "GET" && url.pathname === "/robots.txt") {
-      return new Response("User-agent: *\nAllow: /\n", { headers: { "content-type": "text/plain" } });
+    if (req.method === "GET" && STATIC[url.pathname]) {
+      const [body, type, cache] = STATIC[url.pathname];
+      return new Response(body, { headers: { "content-type": type, "cache-control": cache } });
     }
     if (req.method !== "POST" || (url.pathname !== "/check" && url.pathname !== "/")) {
       return new Response("not found\n", { status: 404 });
