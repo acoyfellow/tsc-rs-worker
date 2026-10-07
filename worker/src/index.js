@@ -5,6 +5,7 @@
 import tsModule from "./ts_rust.wasm"; // wrangler bundles it as a compiled WebAssembly.Module
 import { runTsc, memoryFileSystem } from "./core.js"; // from ts-rust npm/wasm (MIT), see NOTICE.md
 import page from "./page.html";
+import ogImage from "./og.png"; // link-preview image for X, Slack and others
 
 const MAX_BYTES = 64 * 1024;
 const TSCONFIG = JSON.stringify({
@@ -36,6 +37,12 @@ export default {
     const url = new URL(req.url);
     if (req.method === "GET" && url.pathname === "/") {
       return new Response(page, { headers: { "content-type": "text/html; charset=utf-8" } });
+    }
+    if (req.method === "GET" && url.pathname === "/og.png") {
+      return new Response(ogImage, { headers: { "content-type": "image/png", "cache-control": "public, max-age=86400" } });
+    }
+    if (req.method === "GET" && url.pathname === "/robots.txt") {
+      return new Response("User-agent: *\nAllow: /\n", { headers: { "content-type": "text/plain" } });
     }
     if (req.method !== "POST" || (url.pathname !== "/check" && url.pathname !== "/")) {
       return new Response("not found\n", { status: 404 });

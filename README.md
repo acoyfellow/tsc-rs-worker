@@ -44,7 +44,7 @@ There are two builds of the module. The deployed site uses the small one.
 
 | | Small build (deployed) | Fast build |
 |---|---|---|
-| How | `wasm` profile: size-optimised, fat LTO, then `wasm-opt` | `release` profile, no `wasm-opt` |
+| Optimised for | size (`scripts/build-wasm.sh small`) | build speed (`scripts/build-wasm.sh`) |
 | Module size | **4.7 MB (2.0 MB gzip)** | 14.5 MB (4.0 MB gzip) |
 | Build time (4 cores, warm cargo cache) | about 5 min | about 3 min |
 | Warm check, Node 22 (median) | 74 ms | 55 ms |

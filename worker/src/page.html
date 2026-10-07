@@ -4,7 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>tsc-rs in a Cloudflare Worker</title>
-<meta name="description" content="The TypeScript 7 type checker, ported to Rust and compiled to WebAssembly, running inside a Cloudflare Worker. Paste code, get real tsc errors.">
+<meta name="description" content="The TypeScript type checker, ported to Rust and compiled to WebAssembly, running inside a Cloudflare Worker. Paste code, get real TypeScript errors in milliseconds.">
+<link rel="canonical" href="https://tsc-rs.coey.dev/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f6821f'/%3E%3Ctext x='32' y='43' font-family='monospace' font-size='28' font-weight='700' text-anchor='middle' fill='white'%3ETS%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#f6821f">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tsc-rs.coey.dev/">
+<meta property="og:title" content="The TypeScript type checker, inside a Cloudflare Worker">
+<meta property="og:description" content="tsc-rs compiled to WebAssembly, checking code in memory in about 70 ms. No container, no file system, no Node.">
+<meta property="og:image" content="https://tsc-rs.coey.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@acoyfellow">
+<meta name="twitter:title" content="The TypeScript type checker, inside a Cloudflare Worker">
+<meta name="twitter:description" content="tsc-rs compiled to WebAssembly, checking code in memory in about 70 ms. No container, no file system, no Node.">
+<meta name="twitter:image" content="https://tsc-rs.coey.dev/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Google+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -64,7 +79,7 @@
   <p class="lede">
     <a href="https://github.com/pingdotgg/ts-rust">tsc-rs</a> is a Rust port of the TypeScript 7 compiler.
     Compiled to WebAssembly, it runs <b>in memory, inside this Worker</b>: no container, no file system, no Node.
-    Paste code below and get the same errors <code>tsc</code> gives you.
+    Paste code below and get real TypeScript errors back in milliseconds.
   </p>
 
   <div class="presets" id="presets"></div>
@@ -83,7 +98,7 @@
   <div class="bar" id="bar">
     <button id="run">Type-check</button>
     <span class="spinner" aria-hidden="true"></span>
-    <span class="stat" id="stat">strict, lib es2022</span>
+    <span class="stat" id="stat">strict mode · ⌘/Ctrl + Enter</span>
   </div>
   <ul id="out" aria-live="polite"></ul>
 
@@ -97,8 +112,8 @@
     <thead><tr><th>Measured</th><th>Value</th></tr></thead>
     <tbody>
       <tr><td>This page's last check (round trip)</td><td class="num" id="rt">—</td></tr>
-      <tr><td>Warm check in Node, median (same module)</td><td class="num">74 ms</td></tr>
-      <tr><td>WebAssembly module</td><td class="num">__WASM_MB__ MB</td></tr>
+      <tr><td>Typical check, same module in Node</td><td class="num">74 ms</td></tr>
+      <tr><td>Size of the checker (WebAssembly)</td><td class="num">4.7 MB (2.0 MB compressed)</td></tr>
       <tr><td>tsc-rs commit</td><td class="num"><a href="https://github.com/pingdotgg/ts-rust/commit/dfb3ca6">dfb3ca6</a></td></tr>
     </tbody>
   </table>
