@@ -14,7 +14,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 311
+      "roundTripMs": 310
     },
     {
       "name": "valid plain code",
@@ -23,7 +23,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 139
+      "roundTripMs": 116
     },
     {
       "name": "tool call: wrong argument shape",
@@ -36,7 +36,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 177
+      "roundTripMs": 117
     },
     {
       "name": "tool call: made-up method and field",
@@ -51,7 +51,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 147
+      "roundTripMs": 102
     },
     {
       "name": "tool call: valid",
@@ -60,7 +60,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 125
+      "roundTripMs": 151
     },
     {
       "name": "repeat valid 1",
@@ -69,7 +69,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 140
+      "roundTripMs": 126
     },
     {
       "name": "repeat valid 2",
@@ -78,7 +78,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 122
+      "roundTripMs": 110
     },
     {
       "name": "repeat valid 3",
@@ -87,7 +87,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 74
+      "roundTripMs": 78
     },
     {
       "name": "repeat valid 4",
@@ -96,7 +96,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 134
+      "roundTripMs": 276
     },
     {
       "name": "repeat valid 5",
@@ -105,7 +105,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 0,
-      "roundTripMs": 80
+      "roundTripMs": 87
     }
   ]
 }
