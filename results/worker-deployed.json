@@ -1,6 +1,6 @@
 {
-  "target": "local wrangler dev (workerd)",
-  "base": "http://127.0.0.1:8799",
+  "target": "deployed",
+  "base": "(deployed url)",
   "allPass": true,
   "results": [
     {
@@ -13,8 +13,8 @@
       ],
       "pass": true,
       "http": 200,
-      "workerMs": 184,
-      "roundTripMs": 236
+      "workerMs": 0,
+      "roundTripMs": 256
     },
     {
       "name": "valid plain code",
@@ -22,8 +22,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 80,
-      "roundTripMs": 89
+      "workerMs": 0,
+      "roundTripMs": 110
     },
     {
       "name": "tool call: wrong argument shape",
@@ -35,8 +35,8 @@
       ],
       "pass": true,
       "http": 200,
-      "workerMs": 74,
-      "roundTripMs": 83
+      "workerMs": 0,
+      "roundTripMs": 105
     },
     {
       "name": "tool call: made-up method and field",
@@ -50,8 +50,8 @@
       ],
       "pass": true,
       "http": 200,
-      "workerMs": 72,
-      "roundTripMs": 82
+      "workerMs": 0,
+      "roundTripMs": 112
     },
     {
       "name": "tool call: valid",
@@ -59,8 +59,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 50,
-      "roundTripMs": 57
+      "workerMs": 0,
+      "roundTripMs": 72
     },
     {
       "name": "repeat valid 1",
@@ -68,8 +68,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 49,
-      "roundTripMs": 56
+      "workerMs": 0,
+      "roundTripMs": 147
     },
     {
       "name": "repeat valid 2",
@@ -77,8 +77,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 48,
-      "roundTripMs": 55
+      "workerMs": 0,
+      "roundTripMs": 154
     },
     {
       "name": "repeat valid 3",
@@ -86,8 +86,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 50,
-      "roundTripMs": 59
+      "workerMs": 0,
+      "roundTripMs": 113
     },
     {
       "name": "repeat valid 4",
@@ -95,8 +95,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 67,
-      "roundTripMs": 80
+      "workerMs": 0,
+      "roundTripMs": 110
     },
     {
       "name": "repeat valid 5",
@@ -104,8 +104,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 53,
-      "roundTripMs": 61
+      "workerMs": 0,
+      "roundTripMs": 71
     }
   ]
 }
