@@ -5,6 +5,8 @@ No container, no file system, no Node.
 
 **Try it: https://tsc-rs.coey.dev**
 
+[![The demo page: agent code on the left, its tool API on the right, real tsc errors below](docs/screenshot.png)](https://tsc-rs.coey.dev)
+
 [tsc-rs](https://github.com/pingdotgg/ts-rust) is a Rust port of the TypeScript 7 compiler
 ([microsoft/typescript-go](https://github.com/microsoft/typescript-go)). It already ships a
 WebAssembly build. This repo bundles that build into a Worker, puts an HTTP endpoint and a demo page
