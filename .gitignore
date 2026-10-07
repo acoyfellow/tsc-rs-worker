@@ -1,0 +1,5 @@
+node_modules/
+.ts-rust/
+.wrangler/
+worker/src/ts_rust.wasm
+.dev.vars

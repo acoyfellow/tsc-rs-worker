@@ -1,0 +1,64 @@
+name: proof
+# Builds tsc-rs as WebAssembly from source, then checks the same cases in Node and in a local Worker (workerd).
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "fast or small"
+        default: fast
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rust + wasm32-wasip1
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          rustup target add wasm32-wasip1
+          rustc -V
+      - name: binaryen (small mode only)
+        if: ${{ inputs.mode == 'small' }}
+        run: |
+          TAG=$(gh api repos/WebAssembly/binaryen/releases/latest --jq .tag_name)
+          gh release download "$TAG" -R WebAssembly/binaryen -p "binaryen-$TAG-x86_64-linux.tar.gz"
+          tar xzf binaryen-*.tar.gz
+          echo "$PWD/binaryen-$TAG/bin" >> "$GITHUB_PATH"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            .ts-rust/target
+          key: tsrs-${{ inputs.mode || 'fast' }}-${{ hashFiles('scripts/build-wasm.sh') }}
+      - name: Build wasm
+        run: scripts/build-wasm.sh ${{ inputs.mode || 'fast' }}
+      - name: Install wrangler
+        run: npm ci
+      - name: Node check
+        run: node test/bench.mjs
+      - name: Worker check (local workerd)
+        run: node test/worker-test.mjs
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## tsc-rs proof (${{ inputs.mode || 'fast' }})"
+            echo '```json'
+            cat results/node.json 2>/dev/null | node -e 'const r=JSON.parse(require("fs").readFileSync(0));console.log(JSON.stringify({runtime:r.runtime,wasmBytes:r.wasmBytes,compileMs:r.compileMs,warmCheckMs:r.warmCheckMs,peakRssMB:r.peakRssMB,allPass:r.allPass,cases:r.results.map(c=>[c.name,c.pass,c.got,c.ms])},null,1))'
+            cat results/worker-local.json 2>/dev/null | node -e 'const r=JSON.parse(require("fs").readFileSync(0));console.log(JSON.stringify({target:r.target,allPass:r.allPass,cases:r.results.map(c=>[c.name,c.pass,c.got,c.workerMs])},null,1))'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: proof-${{ inputs.mode || 'fast' }}
+          path: |
+            results/
+            worker/src/ts_rust.wasm

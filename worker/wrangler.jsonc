@@ -1,0 +1,13 @@
+{
+  "name": "tsc-rs-worker",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "rules": [
+    { "type": "CompiledWasm", "globs": ["**/*.wasm"], "fallthrough": true },
+    { "type": "Text", "globs": ["**/*.html"], "fallthrough": true }
+  ],
+  // 30 checks per minute per IP. Remove this block if your account has no rate limiting.
+  "ratelimits": [{ "name": "LIMITER", "namespace_id": "1001", "simple": { "limit": 30, "period": 60 } }]
+  // To serve on your own domain, add for example:
+  // "routes": [{ "pattern": "tsc-rs.example.com", "custom_domain": true }]
+}

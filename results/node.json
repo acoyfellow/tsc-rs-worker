@@ -1,0 +1,75 @@
+{
+  "runtime": "node v22.22.3",
+  "wasmBytes": 14470486,
+  "compileMs": 32,
+  "warmCheckMs": {
+    "min": 50,
+    "median": 55,
+    "max": 64
+  },
+  "peakRssMB": 120,
+  "allPass": true,
+  "results": [
+    {
+      "name": "unknown misuse",
+      "expect": [
+        18046
+      ],
+      "got": [
+        18046
+      ],
+      "pass": true,
+      "ms": 157,
+      "diagnostics": [
+        "TS18046: 'state.nonExistentMethod' is of type 'unknown'."
+      ]
+    },
+    {
+      "name": "valid plain code",
+      "expect": [],
+      "got": [],
+      "pass": true,
+      "ms": 67,
+      "diagnostics": []
+    },
+    {
+      "name": "tool call: wrong argument shape",
+      "expect": [
+        2345
+      ],
+      "got": [
+        2345
+      ],
+      "pass": true,
+      "ms": 79,
+      "diagnostics": [
+        "TS2345: Argument of type 'string' is not assignable to parameter of type '{ command: string; cwd?: string | undefined; }'."
+      ]
+    },
+    {
+      "name": "tool call: made-up method and field",
+      "expect": [
+        2339,
+        2339
+      ],
+      "got": [
+        2339,
+        2339
+      ],
+      "pass": true,
+      "ms": 71,
+      "diagnostics": [
+        "TS2339: Property 'writeFile' does not exist on type '{ exec(input: { command: string; cwd?: string | undefined; }): Promise<{ stdout: string; stderr: string; exitCode: number; }>; readFile(input: { path: string; }): Promise<string>; }'.",
+        "TS2339: Property 'output' does not exist on type '{ stdout: string; stderr: string; exitCode: number; }'."
+      ]
+    },
+    {
+      "name": "tool call: valid",
+      "expect": [],
+      "got": [],
+      "pass": true,
+      "ms": 61,
+      "diagnostics": []
+    }
+  ]
+}
