@@ -1,13 +1,13 @@
 {
   "base": "https://tsc-rs.coey.dev",
-  "date": "2026-10-07T16:32:00.005Z",
+  "date": "2026-10-07T16:43:05.895Z",
   "browser": "Chromium 153.0.8010.12",
   "allPass": true,
   "wasmContentType": "application/wasm",
   "servedByServiceWorker": true,
   "firstBrowserCheck": {
-    "stat": "0 errors · 169 ms in your browser (+ 127 ms to load the checker, once)",
-    "loadMs": 127
+    "stat": "0 errors · 168 ms in your browser (+ 163 ms to load the checker, once)",
+    "loadMs": 163
   },
   "results": {
     "worker": {
@@ -20,7 +20,7 @@
           "2339",
           "2339"
         ],
-        "ms": 89,
+        "ms": 159,
         "pass": true
       },
       "Wrong argument": {
@@ -30,7 +30,7 @@
         "got": [
           "2345"
         ],
-        "ms": 87,
+        "ms": 139,
         "pass": true
       },
       "Unknown misuse": {
@@ -40,13 +40,13 @@
         "got": [
           "18046"
         ],
-        "ms": 95,
+        "ms": 125,
         "pass": true
       },
       "Valid": {
         "expected": [],
         "got": [],
-        "ms": 82,
+        "ms": 78,
         "pass": true
       }
     },
@@ -60,7 +60,7 @@
           "2339",
           "2339"
         ],
-        "ms": 82,
+        "ms": 84,
         "pass": true
       },
       "Wrong argument": {
@@ -70,7 +70,7 @@
         "got": [
           "2345"
         ],
-        "ms": 65,
+        "ms": 72,
         "pass": true
       },
       "Unknown misuse": {
@@ -80,13 +80,13 @@
         "got": [
           "18046"
         ],
-        "ms": 58,
+        "ms": 66,
         "pass": true
       },
       "Valid": {
         "expected": [],
         "got": [],
-        "ms": 57,
+        "ms": 66,
         "pass": true
       }
     },
@@ -98,13 +98,13 @@
         "got": [
           "2345"
         ],
-        "ms": 70,
+        "ms": 72,
         "pass": true
       },
       "Valid": {
         "expected": [],
         "got": [],
-        "ms": 59,
+        "ms": 62,
         "pass": true
       }
     }

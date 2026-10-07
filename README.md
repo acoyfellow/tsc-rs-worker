@@ -1,7 +1,7 @@
-# tsc-rs in a Cloudflare Worker
+# tsc-rs in a Cloudflare Worker, or your browser
 
-The TypeScript 7 type checker, running **inside a Cloudflare Worker**, in memory.
-No container, no file system, no Node.
+The TypeScript 7 type checker, running **inside a Cloudflare Worker**, in memory, or **in your browser** with the
+same module. No container, no file system, no Node.
 
 **Try it: https://tsc-rs.coey.dev**
 

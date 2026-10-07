@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tsc-rs in a Cloudflare Worker</title>
-<meta name="description" content="The TypeScript type checker, ported to Rust and compiled to WebAssembly, running inside a Cloudflare Worker. Paste code, get real TypeScript errors in milliseconds.">
+<title>tsc-rs in a Cloudflare Worker, or your browser</title>
+<meta name="description" content="The TypeScript type checker (tsc-rs, Rust compiled to WebAssembly), running in memory in a Cloudflare Worker, or in your browser with the same module. Real TypeScript errors in milliseconds, offline too.">
 <link rel="canonical" href="https://tsc-rs.coey.dev/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f6821f'/%3E%3Ctext x='32' y='43' font-family='monospace' font-size='28' font-weight='700' text-anchor='middle' fill='white'%3ETS%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#f6821f">
@@ -12,18 +12,19 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="tsc-rs">
 <meta property="og:site_name" content="tsc-rs.coey.dev">
-<meta property="og:image:alt" content="The TypeScript type checker inside a Cloudflare Worker, catching a wrong argument: TS2345">
+<meta property="og:image:alt" content="The TypeScript type checker in a Cloudflare Worker or your browser, catching a wrong argument: TS2345">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tsc-rs.coey.dev/">
-<meta property="og:title" content="The TypeScript type checker, inside a Cloudflare Worker">
-<meta property="og:description" content="tsc-rs compiled to WebAssembly, checking code in memory in about 70 ms. No container, no file system, no Node.">
+<meta property="og:title" content="The TypeScript type checker, in a Cloudflare Worker or your browser">
+<meta property="og:description" content="tsc-rs compiled to WebAssembly: real tsc errors in about 100 ms from a Cloudflare Worker, or about 60 ms in your browser, offline too.">
 <meta property="og:image" content="https://tsc-rs.coey.dev/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@acoyfellow">
-<meta name="twitter:title" content="The TypeScript type checker, inside a Cloudflare Worker">
-<meta name="twitter:description" content="tsc-rs compiled to WebAssembly, checking code in memory in about 70 ms. No container, no file system, no Node.">
+<meta name="twitter:title" content="The TypeScript type checker, in a Cloudflare Worker or your browser">
+<meta name="twitter:image:alt" content="The TypeScript type checker in a Cloudflare Worker or your browser, catching a wrong argument: TS2345">
+<meta name="twitter:description" content="tsc-rs compiled to WebAssembly: real tsc errors in about 100 ms from a Cloudflare Worker, or about 60 ms in your browser, offline too.">
 <meta name="twitter:image" content="https://tsc-rs.coey.dev/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -84,7 +85,7 @@
 </head>
 <body>
 <main>
-  <h1>The TypeScript type checker,<br>inside a Cloudflare Worker.</h1>
+  <h1>The TypeScript type checker,<br>inside a Cloudflare Worker, or your browser.</h1>
   <p class="lede">
     <a href="https://github.com/pingdotgg/ts-rust">tsc-rs</a> is a Rust port of the TypeScript 7 compiler.
     Compiled to WebAssembly, it runs <b>in memory, inside this Worker</b>: no container, no file system, no Node.
@@ -119,7 +120,7 @@
   <section class="how">
     <div><h2>Why</h2><p>Agents write code against tools. A wrong argument or a made-up method should fail in milliseconds, before the code runs, not halfway through a job.</p></div>
     <div><h2>How</h2><p>The checker is one WebAssembly module, bundled with the Worker. Each check gets a fresh instance and an in-memory file system holding your two files. In your browser, the same module runs in a background thread and is cached for offline use.</p></div>
-    <div><h2>Proof</h2><p>The <a href="https://github.com/acoyfellow/tsc-rs-worker">repo</a> builds the module from tsc-rs source and checks the same cases in Node, in a local Worker, and against this deployed Worker.</p></div>
+    <div><h2>Proof</h2><p>The <a href="https://github.com/acoyfellow/tsc-rs-worker">repo</a> builds the module from tsc-rs source and checks the same cases in Node, in a local Worker, against this deployed Worker, and in a real browser, online and offline.</p></div>
   </section>
 
   <table id="facts">
