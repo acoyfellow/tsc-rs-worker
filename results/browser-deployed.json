@@ -1,0 +1,116 @@
+{
+  "base": "https://tsc-rs.coey.dev",
+  "date": "2026-10-07T16:32:00.005Z",
+  "browser": "Chromium 153.0.8010.12",
+  "allPass": true,
+  "wasmContentType": "application/wasm",
+  "servedByServiceWorker": true,
+  "firstBrowserCheck": {
+    "stat": "0 errors · 169 ms in your browser (+ 127 ms to load the checker, once)",
+    "loadMs": 127
+  },
+  "results": {
+    "worker": {
+      "Made-up method": {
+        "expected": [
+          "2339",
+          "2339"
+        ],
+        "got": [
+          "2339",
+          "2339"
+        ],
+        "ms": 89,
+        "pass": true
+      },
+      "Wrong argument": {
+        "expected": [
+          "2345"
+        ],
+        "got": [
+          "2345"
+        ],
+        "ms": 87,
+        "pass": true
+      },
+      "Unknown misuse": {
+        "expected": [
+          "18046"
+        ],
+        "got": [
+          "18046"
+        ],
+        "ms": 95,
+        "pass": true
+      },
+      "Valid": {
+        "expected": [],
+        "got": [],
+        "ms": 82,
+        "pass": true
+      }
+    },
+    "browser": {
+      "Made-up method": {
+        "expected": [
+          "2339",
+          "2339"
+        ],
+        "got": [
+          "2339",
+          "2339"
+        ],
+        "ms": 82,
+        "pass": true
+      },
+      "Wrong argument": {
+        "expected": [
+          "2345"
+        ],
+        "got": [
+          "2345"
+        ],
+        "ms": 65,
+        "pass": true
+      },
+      "Unknown misuse": {
+        "expected": [
+          "18046"
+        ],
+        "got": [
+          "18046"
+        ],
+        "ms": 58,
+        "pass": true
+      },
+      "Valid": {
+        "expected": [],
+        "got": [],
+        "ms": 57,
+        "pass": true
+      }
+    },
+    "offline": {
+      "Wrong argument": {
+        "expected": [
+          "2345"
+        ],
+        "got": [
+          "2345"
+        ],
+        "ms": 70,
+        "pass": true
+      },
+      "Valid": {
+        "expected": [],
+        "got": [],
+        "ms": 59,
+        "pass": true
+      }
+    }
+  },
+  "pageErrors": [],
+  "offlineRequestsFailed": [
+    "https://tsc-rs.coey.dev/cdn-cgi/rum?"
+  ]
+}

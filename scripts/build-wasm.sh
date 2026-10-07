@@ -25,4 +25,8 @@ else
   "$src/scripts/wasm/build.sh" "$out"
 fi
 cp "$src/npm/wasm/core.js" "$here/worker/src/core.js"
-ls -l "$out" "$here/worker/src/core.js"
+# The same files, served to the page for the "Your browser" mode.
+mkdir -p "$here/worker/public"
+cp "$out" "$here/worker/public/ts_rust.wasm"
+cp "$src/npm/wasm/core.js" "$src/npm/wasm/browser.js" "$here/worker/public/"
+ls -l "$out" "$here/worker/src/core.js" "$here/worker/public/"

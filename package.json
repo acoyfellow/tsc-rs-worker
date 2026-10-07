@@ -7,10 +7,12 @@
     "build:wasm:small": "scripts/build-wasm.sh small",
     "test:node": "node test/bench.mjs",
     "test:worker": "node test/worker-test.mjs",
+    "test:browser": "node test/browser-test.mjs",
     "dev": "cd worker && wrangler dev",
     "deploy": "cd worker && wrangler deploy"
   },
   "devDependencies": {
+    "playwright": "1.63.0",
     "wrangler": "4.148.0"
   }
 }

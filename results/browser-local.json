@@ -1,0 +1,113 @@
+{
+  "base": "http://localhost:8787",
+  "date": "2026-10-07T16:28:33.541Z",
+  "browser": "Chromium 153.0.8010.12",
+  "allPass": true,
+  "wasmContentType": "application/wasm",
+  "servedByServiceWorker": true,
+  "firstBrowserCheck": {
+    "stat": "0 errors · 166 ms in your browser (+ 171 ms to load the checker, once)",
+    "loadMs": 171
+  },
+  "results": {
+    "worker": {
+      "Made-up method": {
+        "expected": [
+          "2339",
+          "2339"
+        ],
+        "got": [
+          "2339",
+          "2339"
+        ],
+        "ms": 80,
+        "pass": true
+      },
+      "Wrong argument": {
+        "expected": [
+          "2345"
+        ],
+        "got": [
+          "2345"
+        ],
+        "ms": 77,
+        "pass": true
+      },
+      "Unknown misuse": {
+        "expected": [
+          "18046"
+        ],
+        "got": [
+          "18046"
+        ],
+        "ms": 75,
+        "pass": true
+      },
+      "Valid": {
+        "expected": [],
+        "got": [],
+        "ms": 72,
+        "pass": true
+      }
+    },
+    "browser": {
+      "Made-up method": {
+        "expected": [
+          "2339",
+          "2339"
+        ],
+        "got": [
+          "2339",
+          "2339"
+        ],
+        "ms": 86,
+        "pass": true
+      },
+      "Wrong argument": {
+        "expected": [
+          "2345"
+        ],
+        "got": [
+          "2345"
+        ],
+        "ms": 64,
+        "pass": true
+      },
+      "Unknown misuse": {
+        "expected": [
+          "18046"
+        ],
+        "got": [
+          "18046"
+        ],
+        "ms": 62,
+        "pass": true
+      },
+      "Valid": {
+        "expected": [],
+        "got": [],
+        "ms": 61,
+        "pass": true
+      }
+    },
+    "offline": {
+      "Wrong argument": {
+        "expected": [
+          "2345"
+        ],
+        "got": [
+          "2345"
+        ],
+        "ms": 75,
+        "pass": true
+      },
+      "Valid": {
+        "expected": [],
+        "got": [],
+        "ms": 65,
+        "pass": true
+      }
+    }
+  },
+  "pageErrors": []
+}

@@ -13,8 +13,8 @@
       ],
       "pass": true,
       "http": 200,
-      "workerMs": 175,
-      "roundTripMs": 200
+      "workerMs": 177,
+      "roundTripMs": 215
     },
     {
       "name": "valid plain code",
@@ -22,8 +22,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 77,
-      "roundTripMs": 85
+      "workerMs": 79,
+      "roundTripMs": 91
     },
     {
       "name": "tool call: wrong argument shape",
@@ -36,7 +36,7 @@
       "pass": true,
       "http": 200,
       "workerMs": 78,
-      "roundTripMs": 87
+      "roundTripMs": 90
     },
     {
       "name": "tool call: made-up method and field",
@@ -50,8 +50,8 @@
       ],
       "pass": true,
       "http": 200,
-      "workerMs": 73,
-      "roundTripMs": 82
+      "workerMs": 88,
+      "roundTripMs": 99
     },
     {
       "name": "tool call: valid",
@@ -59,8 +59,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 61,
-      "roundTripMs": 70
+      "workerMs": 68,
+      "roundTripMs": 80
     },
     {
       "name": "repeat valid 1",
@@ -68,8 +68,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 63,
-      "roundTripMs": 72
+      "workerMs": 62,
+      "roundTripMs": 73
     },
     {
       "name": "repeat valid 2",
@@ -77,7 +77,7 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 63,
+      "workerMs": 64,
       "roundTripMs": 73
     },
     {
@@ -86,8 +86,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 58,
-      "roundTripMs": 68
+      "workerMs": 69,
+      "roundTripMs": 81
     },
     {
       "name": "repeat valid 4",
@@ -95,8 +95,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 55,
-      "roundTripMs": 63
+      "workerMs": 63,
+      "roundTripMs": 76
     },
     {
       "name": "repeat valid 5",
@@ -104,8 +104,8 @@
       "got": [],
       "pass": true,
       "http": 200,
-      "workerMs": 53,
-      "roundTripMs": 60
+      "workerMs": 70,
+      "roundTripMs": 84
     }
   ]
 }

@@ -1,7 +1,9 @@
-// Service worker for tsc-rs.coey.dev: keeps the page and its icons available offline.
-// Type checks always go to the network; they need the Worker.
-const CACHE = "tsc-rs-v1";
+// Service worker for tsc-rs.coey.dev: keeps the page, and the in-browser checker
+// once you have used it, available offline. Worker checks always need the network.
+const CACHE = "tsc-rs-v2";
 const SHELL = ["/", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png"];
+// Fetched only when you switch to "Your browser", then kept for offline use.
+const CHECKER = ["/check-worker.js", "/browser.js", "/core.js", "/ts_rust.wasm"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -17,16 +19,17 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET" || url.origin !== location.origin) return;
+  const keep = SHELL.includes(url.pathname) || CHECKER.includes(url.pathname);
   // Network first, so a new deploy shows up straight away; fall back to the cache offline.
   e.respondWith(
     fetch(e.request)
       .then((res) => {
-        if (res.ok && SHELL.includes(url.pathname)) {
+        if (res.ok && keep) {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, copy));
+          caches.open(CACHE).then((c) => c.put(url.pathname, copy));
         }
         return res;
       })
-      .catch(() => caches.match(e.request)),
+      .catch(() => caches.match(url.pathname)),
   );
 });

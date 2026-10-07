@@ -58,6 +58,10 @@
   #run { font: 600 15px var(--sans); padding: 11px 20px; border-radius: 10px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
   #run:disabled { opacity: .6; cursor: progress; }
   .stat { font: 13px var(--mono); color: var(--muted); }
+  .where-run { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card); }
+  .where-run button { font: 14px var(--sans); padding: 10px 14px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+  .where-run button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  .where-run button + button { border-left: 1px solid var(--line); }
   .spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; display: none; }
   .busy .spinner { display: inline-block; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -85,6 +89,7 @@
     <a href="https://github.com/pingdotgg/ts-rust">tsc-rs</a> is a Rust port of the TypeScript 7 compiler.
     Compiled to WebAssembly, it runs <b>in memory, inside this Worker</b>: no container, no file system, no Node.
     Paste code below and get real TypeScript errors back in milliseconds.
+    Or switch to <b>Your browser</b> and the same module checks it on your machine.
   </p>
 
   <div class="presets" id="presets"></div>
@@ -102,6 +107,10 @@
 
   <div class="bar" id="bar">
     <button id="run">Type-check</button>
+    <span class="where-run" role="group" aria-label="Where to check">
+      <button id="on-worker" aria-pressed="true" title="Send the code to this Cloudflare Worker">Cloudflare Worker</button>
+      <button id="on-browser" aria-pressed="false" title="Download the checker once (2.0 MB) and run it here">Your browser</button>
+    </span>
     <span class="spinner" aria-hidden="true"></span>
     <span class="stat" id="stat">strict mode · ⌘/Ctrl + Enter</span>
   </div>
@@ -109,14 +118,16 @@
 
   <section class="how">
     <div><h2>Why</h2><p>Agents write code against tools. A wrong argument or a made-up method should fail in milliseconds, before the code runs, not halfway through a job.</p></div>
-    <div><h2>How</h2><p>The checker is one WebAssembly module, bundled with the Worker. Each request gets a fresh instance and an in-memory file system holding your two files.</p></div>
+    <div><h2>How</h2><p>The checker is one WebAssembly module, bundled with the Worker. Each check gets a fresh instance and an in-memory file system holding your two files. In your browser, the same module runs in a background thread and is cached for offline use.</p></div>
     <div><h2>Proof</h2><p>The <a href="https://github.com/acoyfellow/tsc-rs-worker">repo</a> builds the module from tsc-rs source and checks the same cases in Node, in a local Worker, and against this deployed Worker.</p></div>
   </section>
 
   <table id="facts">
     <thead><tr><th>Measured</th><th>Value</th></tr></thead>
     <tbody>
-      <tr><td>This page's last check (round trip)</td><td class="num" id="rt">—</td></tr>
+      <tr><td>Your last check on the Worker (round trip)</td><td class="num" id="rt">—</td></tr>
+      <tr><td>Your last check in your browser</td><td class="num" id="bt">—</td></tr>
+      <tr><td>First browser check: download and compile</td><td class="num" id="bl">—</td></tr>
       <tr><td>Typical check, same module in Node</td><td class="num">74 ms</td></tr>
       <tr><td>Size of the checker (WebAssembly)</td><td class="num">4.7 MB (2.0 MB compressed)</td></tr>
       <tr><td>tsc-rs commit</td><td class="num"><a href="https://github.com/pingdotgg/ts-rust/commit/dfb3ca6">dfb3ca6</a></td></tr>
@@ -164,28 +175,72 @@ PRESETS.forEach(([name, code], i) => {
 });
 src.value = PRESETS[0][1];
 
+// Where to check: "worker" (POST /check) or "browser" (the same module, in a background thread here).
+let where = new URLSearchParams(location.search).get("run") === "browser" || localStorage.getItem("run") === "browser" ? "browser" : "worker";
+let bg, nextId = 0, firstBrowserCheck = true;
+const pending = new Map();
+function browserChecker() {
+  if (!bg) {
+    bg = new Worker("/check-worker.js", { type: "module" });
+    bg.onmessage = ({ data }) => { pending.get(data.id)?.(data); pending.delete(data.id); };
+  }
+  return bg;
+}
+function checkInBrowser(files) {
+  return new Promise((resolve) => { const id = ++nextId; pending.set(id, resolve); browserChecker().postMessage({ id, files }); });
+}
+function setWhere(w) {
+  where = w; localStorage.setItem("run", w);
+  $("on-worker").setAttribute("aria-pressed", w === "worker");
+  $("on-browser").setAttribute("aria-pressed", w === "browser");
+}
+
+function show(body) {
+  out.replaceChildren();
+  const li = (cls, text) => { const el = document.createElement("li"); el.className = cls; if (text) el.textContent = text; out.append(el); return el; };
+  if (body.error || body.crash) return li("err", body.error || body.crash);
+  if (body.ok) return li("ok", "No errors.");
+  for (const d of body.diagnostics) {
+    const w = document.createElement("span"); w.className = "where"; w.textContent = `${(d.file || "").replace("/p/", "")}:${d.line}  TS${d.code}`;
+    li("err").append(w, document.createTextNode(d.text));
+  }
+}
+
 async function check() {
-  run.disabled = true; $("bar").classList.add("busy"); stat.textContent = "checking…";
-  const t = performance.now();
+  run.disabled = true; $("bar").classList.add("busy");
+  const files = { "agent.ts": src.value, "tools.d.ts": tools.value };
+  const n = (b) => { const k = b.diagnostics?.length ?? 0; return `${k} error${k === 1 ? "" : "s"}`; };
   try {
-    const res = await fetch("/check", { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ files: { "agent.ts": src.value, "tools.d.ts": tools.value } }) });
-    const body = await res.json();
-    const ms = Math.round(performance.now() - t);
-    out.replaceChildren();
-    if (!res.ok) { const li = document.createElement("li"); li.className = "err"; li.textContent = body.error || body.crash || `HTTP ${res.status}`; out.append(li); }
-    else if (body.ok) { const li = document.createElement("li"); li.className = "ok"; li.textContent = "No errors."; out.append(li); }
-    else for (const d of body.diagnostics) {
-      const li = document.createElement("li"); li.className = "err";
-      const w = document.createElement("span"); w.className = "where"; w.textContent = `${(d.file || "").replace("/p/", "")}:${d.line}  TS${d.code}`;
-      li.append(w, document.createTextNode(d.text)); out.append(li);
+    if (where === "browser") {
+      stat.textContent = firstBrowserCheck ? "loading the checker (a 2.0 MB download the first time)…" : "checking in your browser…";
+      const body = await checkInBrowser(files);
+      show(body);
+      const ms = Math.round(body.ms);
+      if (body.error) stat.textContent = "the in-browser check failed; try Cloudflare Worker";
+      else {
+        const load = firstBrowserCheck && body.loadMs > 5 ? ` (+ ${Math.round(body.loadMs)} ms to load the checker, once)` : "";
+        stat.textContent = `${n(body)} · ${ms} ms in your browser${load}`;
+        $("bt").textContent = `${ms} ms`;
+        if (firstBrowserCheck) $("bl").textContent = `${Math.round(body.loadMs)} ms`;
+        firstBrowserCheck = false;
+      }
+    } else {
+      stat.textContent = "checking on the Worker…";
+      const t = performance.now();
+      const res = await fetch("/check", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ files }) });
+      const body = await res.json();
+      const ms = Math.round(performance.now() - t);
+      if (!res.ok && !body.error && !body.crash) body.error = `HTTP ${res.status}`;
+      show(body);
+      stat.textContent = `${n(body)} · ${ms} ms round trip to the Worker`;
+      $("rt").textContent = `${ms} ms`;
     }
-    const n = body.diagnostics?.length ?? 0;
-    stat.textContent = `${n} error${n === 1 ? "" : "s"} · ${ms} ms round trip`;
-    $("rt").textContent = `${ms} ms`;
   } catch (e) { stat.textContent = String(e); }
   finally { run.disabled = false; $("bar").classList.remove("busy"); }
 }
+$("on-worker").onclick = () => { setWhere("worker"); check(); };
+$("on-browser").onclick = () => { setWhere("browser"); check(); };
+setWhere(where);
 run.onclick = check;
 src.addEventListener("keydown", (e) => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") check(); });
 check();
